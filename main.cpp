@@ -61,7 +61,7 @@ int main(){
             case ERROR:{
                 //如果遇到无法识别的词,把该词剩余字符读取完毕
                 //并且，将该词记入记号表,标为unrecognized
-                while(!isspace(ch = fin.get())){
+                while(!isspace(ch = fin.get()) && ch != EOF){
                     buffer += ch;                 
                 };
                 table.insertTable(Record(UNRECOGNIZED, buffer));
