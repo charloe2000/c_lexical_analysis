@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include "config.h"
 #include "utils.h"
 
@@ -13,13 +14,16 @@ int main(){
     char ch;
     //当前词
     string buffer;
+
+    ifstream fin;
+    fin.open("code.txt");
     
     do{
         switch(state){
             //开始状态
             case BEGIN:{
                 //清除空格字符
-                while(isspace(ch = getchar()));
+                while(isspace(ch = fin.get()));
                 //把字符加入到当前词
                 buffer += ch;
 
@@ -34,7 +38,7 @@ int main(){
 
             //标识符的第一个状态
             case ID_0:{
-                ch = getchar();
+                ch = fin.get();
 
                 if(isalpha(ch) || isdigit(ch) || ch == '_'){
                     state = ID_0;
@@ -57,19 +61,20 @@ int main(){
             case ERROR:{
                 //如果遇到无法识别的词,把该词剩余字符读取完毕
                 //并且，将该词记入记号表,标为unrecognized
-                while(!isspace(ch = getchar())){
+                while(!isspace(ch = fin.get())){
                     buffer += ch;                 
                 };
                 table.insertTable(Record(UNRECOGNIZED, buffer));
                 state = END;
                 break;
             }
-
+        
         }
-    }while(ch != '#');
+    }while(ch != EOF);
 
     //所有词都分析完毕后，打印整个记号表
     table.printTable();
+    fin.close();
 
     return 0;
 }   
