@@ -1,7 +1,7 @@
 #pragma once
 #include <iostream>
 #include "config.h"
-using namespace std;
+;using namespace std;
 
 //记号表中的一条记录
 class Record{
@@ -33,3 +33,7 @@ public:
     //打印记号表中的所有记录
     void printTable();
 };
+
+bool isKeyword(string buffer);
+
+bool isPunctuation(char ch);

@@ -8,22 +8,20 @@ using namespace std;
 enum State {
 	BEGIN,
 
-	ID_KEYWORD_0,
-	SYMBOL_0, // +
-	SYMBOL_1, // -
+	INCLUDE_0, INCLUDE_1, INCLUDE_2, INCLUDE_3, INCLUDE_4, // #include
+	ID_KEYWORD_0, // id
+	PUNCTUATION_0, //
+	ARITH_0, // +
+	ARITH_1, // -
 	SIGNED_DIGIT_0,
-	SYMBOL_2, // *
-	SYMBOL_3, // %
-	SYMBOL_4, // /
-	SYMBOL_5, // >
-	SYMBOL_6, // <
-	SYMBOL_7, // &
-	SYMBOL_8, // |
-	SYMBOL_9, // !
-	SYMBOL_10, // =
-	SYMBOL_11, // '
-	SYMBOL_12, // "
-	PUNCTUATION_0,
+	ARITH_2, // *
+	ARITH_3, // %
+	ASSIGN_0, // =, ==
+	RELATION_0, RELATION_1, RELATION_2, RELATION_3, // >, <, >=, <=, >>, <<
+	LOGICAL_0, LOGICAL_1, LOGICAL_2, // &&, ||, !, !=
+	SINGLE_QUETO_0, SINGLE_QUETO_1, SINGLE_QUETO_2, // ''
+	DOUBLE_QUETO_0, DOUBLE_QUETO_1, DOUBLE_QUETO_2, // ""
+	COMMENT_0, COMMENT_1, COMMENT_2, COMMENT_3, // / or /= or // or /* */
 
 	END,
 	ERROR
@@ -32,6 +30,7 @@ enum State {
 const int MAX_RECORD_NUMBER = 1000;
 
 //词法类型
+const string INCLUDE = "include";
 const string ID = "id";
 const string KEYWORD = "keyword";
 const string UNSIGNED_INT = "unsigned_int";
@@ -49,8 +48,8 @@ const string PUNCTUATION = "punctuation";
 const string UNRECOGNIZED = "unrecognized";
 
 //保留字
-const int KETWORD_NUMBER = 32;
-const string KETWORD_TABLE[KETWORD_NUMBER] = {
+const int KEYWORD_NUMBER = 32;
+const string KEYWORD_TABLE[KEYWORD_NUMBER] = {
 	"int",
 	"long",
 	"short",
@@ -83,4 +82,18 @@ const string KETWORD_TABLE[KETWORD_NUMBER] = {
 	"extern",
 	"static",
 	"sizeof"
+};
+
+
+//标点符号
+const int PUNCTUATION_NUMBER = 8;
+const char PUNCTUATION_TABLE[PUNCTUATION_NUMBER] = {
+	',',
+	';',
+	'(',
+	')',
+	'{',
+	'}',
+	'[',
+	']',
 };

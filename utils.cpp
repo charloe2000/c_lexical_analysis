@@ -47,3 +47,19 @@ void Table::printTable(){
         records[i].printRecord();
     }
 }
+
+bool isKeyword(string buffer){
+    for(int i = 0; i < KEYWORD_NUMBER; i++){
+        if(buffer == KEYWORD_TABLE[i])
+            return true;
+    }
+    return false;
+}
+
+bool isPunctuation(char ch){
+    for (int i = 0; i < PUNCTUATION_NUMBER; i++){
+        if(ch == PUNCTUATION_TABLE[i])
+            return true;
+    }
+    return false;
+}

@@ -15,7 +15,7 @@ int main() {
 	string buffer;
 
 	ifstream fin;
-	fin.open("code.txt");
+	fin.open("code.c");
 	while (isspace(ch = fin.get()));
 	do {
 		switch (state) {
@@ -24,30 +24,63 @@ int main() {
 			//进入开始状态时ch保证是不为空且不为空格的
 			//把字符加入到当前词
 			buffer += ch;
-
 			
-			if (isalpha(ch) || ch == '_') state = ID_KEYWORD_0;	// 标识符或关键字			
-			//else if (ch == '+') state = SYMBOL_0;// +
-			//else if (ch == '-') state = SYMBOL_1;// -
-			//else if (isdigit(ch)) state = SIGNED_DIGIT_0;// 数
-			else if (ch == '*') state = SYMBOL_2;// *
-			else if (ch == '%') state = SYMBOL_3;// %
-			else if (ch == '/') state = SYMBOL_4;// /
-			else if (ch == '>') state = SYMBOL_5;// >
-			else if (ch == '<') state = SYMBOL_6;// <
-			else if (ch == '&') state = SYMBOL_7;// &
-			else if (ch == '|') state = SYMBOL_8;// |
-			else if (ch == '!') state = SYMBOL_9;// !
-			else if (ch == '=') state = SYMBOL_10;// =
-			else if (ch == ' \'') state = SYMBOL_11;// '
-			else if (ch == '\"') state = SYMBOL_12;// "
-			else if (ch == ',') state = PUNCTUATION_0;// 标点
-			else if (ch == ';') state = PUNCTUATION_0;// 标点
-			else if (ch == '(') state = PUNCTUATION_0;// 标点
-			else if (ch == ')') state = PUNCTUATION_0;// 标点
-			else if (ch == '{') state = PUNCTUATION_0;// 标点
-			else if (ch == '}') state = PUNCTUATION_0;// 标点
+			if (isalpha(ch) || ch == '_') state = ID_KEYWORD_0;	// 标识符或关键字
+			else if(isPunctuation(ch))	state = PUNCTUATION_0;	//标点符号	
+			else if(ch == '#') state = INCLUDE_0; //#include		
+			else if (ch == '+') state = ARITH_0;// +
+			else if (ch == '-') state = ARITH_1;// -
+			else if (ch == '*') state = ARITH_2;// *
+			else if (ch == '%') state = ARITH_3;// %
+			else if (ch == '>') state = RELATION_0;// >
+			else if (ch == '=') state = ASSIGN_0; // =
+			else if (ch == '<') state = RELATION_1;// <
+			else if (ch == '&') state = LOGICAL_0;// &
+			else if (ch == '|') state = LOGICAL_1;// |
+			else if (ch == '!') state = LOGICAL_2;// !
+			else if (ch == '\'') state = SINGLE_QUETO_0;// '
+			else if (ch == '\"') state = DOUBLE_QUETO_0;// "
+			else if (ch == '/') state = COMMENT_0; // /
+		
 			else state = ERROR;//词法错误
+			break;
+		}
+		//包含语句
+		case INCLUDE_0: {
+			ch = fin.get();
+			buffer += ch;
+			
+			if(isalpha(ch)){
+				state = INCLUDE_1;
+			}else{
+				state = ERROR;
+			}
+			break;
+		}
+		case INCLUDE_1: {
+			ch = fin.get();
+			if(isalpha(ch)){
+				buffer += ch;
+			}else{
+				if(buffer == "#include"){
+					buffer += ch;
+					state = INCLUDE_2;
+				}
+				else{
+					state = ERROR;
+				}
+			}
+			break;
+		}
+		case INCLUDE_2: {
+			ch = fin.get();			
+			if(!isspace(ch)){
+				buffer += ch;
+				state = INCLUDE_2;
+			}else{
+				table.insertTable(Record(INCLUDE, buffer));
+				state = END;
+			}
 			break;
 		}
 
@@ -56,28 +89,258 @@ int main() {
 			ch = fin.get();
 
 			if (isalpha(ch) || isdigit(ch) || ch == '_') {
-				//state = ID_KEYWORD_0;
 				buffer += ch;
 			}
 			else {
-				bool keyword_flag = false;
-				for (int i = 0; i < KETWORD_NUMBER; ++i) {
-					if (buffer == KETWORD_TABLE[i]) {
-						table.insertTable(Record(KEYWORD, buffer));
-						state = END;
-						keyword_flag = true;
-						break;
-					}
+				if(isKeyword(buffer)){
+					table.insertTable(Record(KEYWORD, buffer));
 				}
-				if (!keyword_flag) {
+				else{
 					table.insertTable(Record(ID, buffer));
-					state = END;
 				}
+				state = END;
+			}
+			break;
+		}
+
+		//赋值运算符：= or 关系运算符： ==
+		case ASSIGN_0: {
+			ch = fin.get();
+			
+			if(ch == '='){
+				buffer += ch;
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}else{
+				table.insertTable(Record(ASSIGN_OP, buffer));
+				state = END;
+			}
+			break;
+		}
+
+		//关系运算符： >, >=, >>
+		case RELATION_0: {
+			ch = fin.get();
+
+			if(ch == '='){
+				buffer += ch;
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}else if(ch == '>'){
+				buffer += ch;
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}
+			else{
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+			}
+			break;
+		}
+		//关系运算符： <, <=, <<
+		case RELATION_1: {
+			ch = fin.get();
+
+			if(ch == '='){
+				buffer += ch;
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}else if(ch == '<'){
+				buffer += ch;
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}
+			else{
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+			}
+			break;
+		}
+
+		//逻辑运算符: &&
+		case LOGICAL_0: {
+			ch = fin.get();
+			buffer += ch;
+
+			if(ch == '&'){
+				table.insertTable(Record(LOGICAL_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}else{
+				state = ERROR;
+			}
+			break;
+		}
+		//逻辑运算符: ||
+		case LOGICAL_1: {
+			ch = fin.get();
+			buffer += ch;
+
+			if(ch == '|'){
+				table.insertTable(Record(LOGICAL_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}else{
+				state = ERROR;
+			}
+			break;
+		}
+		//逻辑运算符: ! or 关系运算符: !=
+		case LOGICAL_2: {
+			ch = fin.get();
+			if(ch == '='){
+				buffer += ch;
+				table.insertTable(Record(RELATION_OP, buffer));
+				state = END;
+				ch = fin.get();
+			}else{
+				table.insertTable(Record(LOGICAL_OP, buffer));
+				state = END;
+			}
+			break;
+		}
+
+		//标点符号
+		case PUNCTUATION_0:{
+			ch = fin.get();
+
+			table.insertTable(Record(PUNCTUATION, buffer));
+			state = END;
+			break;
+		}
+
+		//单引号
+		case SINGLE_QUETO_0:{
+			ch = fin.get();
+			buffer += ch;
+
+			state = SINGLE_QUETO_1;
+			break;
+		}
+		case SINGLE_QUETO_1:{
+			ch = fin.get();
+			buffer += ch;
+			if(ch == '\''){
+				state = SINGLE_QUETO_2;
+			}else{
+				state = ERROR;
+			}
+			break;
+		}
+		case SINGLE_QUETO_2:{
+			ch = fin.get();
+			if(isspace(ch) || isPunctuation(ch)){
+				table.insertTable(Record(CHAR, buffer));
+				state = END;
+			}else{
+				buffer += ch;
+				state = ERROR;
+			}
+			break;
+		}
+
+		//双引号
+		case DOUBLE_QUETO_0:{
+			ch = fin.get();
+			buffer += ch;
+
+			if(ch == '\"'){
+				state = DOUBLE_QUETO_2;
+			}else{
+				state = DOUBLE_QUETO_1;
+			}
+			break;
+		}
+		case DOUBLE_QUETO_1:{
+			ch = fin.get();
+			buffer += ch;
+
+			if(ch == '\"'){
+				state = DOUBLE_QUETO_2;
+			}else{
+				state = DOUBLE_QUETO_1;
+			}
+			break;
+		}
+		case DOUBLE_QUETO_2:{
+			ch = fin.get();
+			if(isspace(ch) || isPunctuation(ch)){
+				table.insertTable(Record(STRING, buffer));
+				state = END;
+			}else{
+				buffer += ch;
+				state = ERROR;
+			}
+			break;
+		}
+
+		//注释://
+		case COMMENT_0: {
+			ch = fin.get();			
+
+			if(ch == '/'){
+				buffer += ch;
+				state = COMMENT_1;
+			}else if(ch == '*'){
+				buffer += ch;
+				state = COMMENT_2;
+			}else if(ch == '='){
+				buffer += ch;
+				table.insertTable(Record(ARITH_OP, buffer));
+				state = END;
+			}
+			else{
+				table.insertTable(Record(ARITH_OP, buffer));
+				state = END;
+			}
+			break;
+		}
+		case COMMENT_1: {
+			ch = fin.get();
+			
+			if(ch == '\n'){
+				table.insertTable(Record(COMMENT, buffer));
+				state = END;
+			}else{
+				buffer += ch;
+			}
+			break;
+		}
+		//注释:/*
+		case COMMENT_2: {
+			ch = fin.get();
+			buffer += ch;
+
+			if(ch == '*'){
+				state = COMMENT_3;
+			}else if (ch == EOF){
+				state = ERROR;
+			}
+			break;
+		}
+		case COMMENT_3: {
+			ch = fin.get();
+			buffer += ch;
+
+			if(ch == '/'){
+				table.insertTable(Record(COMMENT, buffer));
+				state = END;
+				ch = fin.get();
+			}else if (ch == EOF){
+				state = ERROR;
+			}
+			else{
+				state = COMMENT_2;
 			}
 			break;
 		}
 		// +
-		case SYMBOL_0: {
+		case ARITH_0: {
 			ch = fin.get();
 
 			if (ch == '+' || ch == '=') {
@@ -86,9 +349,6 @@ int main() {
 				ch = fin.get();
 				state = END;
 			}
-			else if (isdigit(ch)) {
-				state = SIGNED_DIGIT_0;
-			}
 			else {
 				table.insertTable(Record(ARITH_OP, buffer));
 				state = END;
@@ -96,7 +356,7 @@ int main() {
 			break;
 		}
 		// -
-		case SYMBOL_1: {
+		case ARITH_1: {
 			ch = fin.get();
 
 			if (ch == '-' || ch == '=') {
@@ -105,9 +365,6 @@ int main() {
 				ch = fin.get();
 				state = END;
 			}
-			else if (isdigit(ch)) {
-				state = SIGNED_DIGIT_0;
-			}
 			else {
 				table.insertTable(Record(ARITH_OP, buffer));
 				state = END;
@@ -115,24 +372,8 @@ int main() {
 			break;
 		}
 
-		//数
-		/*case SIGNED_DIGIT_0: {
-			ch = fin.get();
-
-			if ( isdigit(ch) ) {
-				buffer += ch;
-			}
-			else if (ch == '.') {
-
-			}
-			else {
-				table.insertTable(Record(ID, buffer));
-				state = END;
-			}
-			break;
-		}*/
 		// *
-		case SYMBOL_2: {
+		case ARITH_2: {
 			ch = fin.get();
 
 			if (ch == '=') {
@@ -148,7 +389,7 @@ int main() {
 			break;
 		}
 		// %
-		case SYMBOL_3: {
+		case ARITH_3: {
 			ch = fin.get();
 
 			if (ch == '=') {
@@ -174,7 +415,7 @@ int main() {
 			break;
 		}
 
-				  //遇到无法解析的词法
+		//遇到无法解析的词法
 		case ERROR: {
 			//如果遇到无法识别的词,把该词剩余字符读取完毕
 			//并且，将该词记入记号表,标为unrecognized
