@@ -9,6 +9,7 @@ enum State {
 	BEGIN,
 
 	INCLUDE_0, INCLUDE_1, INCLUDE_2, INCLUDE_3, INCLUDE_4, // #include
+	DIGIT_0, DIGIT_1, DIGIT_2, DIGIT_3, DIGIT_4, DIGIT_5, //digit
 	ID_KEYWORD_0, // id
 	PUNCTUATION_0, //
 	ARITH_0, // +
@@ -33,10 +34,8 @@ const int MAX_RECORD_NUMBER = 1000;
 const string INCLUDE = "include";
 const string ID = "id";
 const string KEYWORD = "keyword";
-const string UNSIGNED_INT = "unsigned_int";
-const string SIGNED_INT = "signed_int";
-const string UNSIGNED_DOUBLE = "unsigned_double";
-const string SIGNED_DOUBLE = "signed_double";
+const string INT = "int";
+const string DOUBLE = "double";
 const string CHAR = "char";
 const string STRING = "string";
 const string ASSIGN_OP = "assign_op";

@@ -27,7 +27,8 @@ int main() {
 			
 			if (isalpha(ch) || ch == '_') state = ID_KEYWORD_0;	// 标识符或关键字
 			else if(isPunctuation(ch))	state = PUNCTUATION_0;	//标点符号	
-			else if(ch == '#') state = INCLUDE_0; //#include		
+			else if(ch == '#') state = INCLUDE_0; //#include
+			else if (isdigit(ch)) state = DIGIT_0;// 数		
 			else if (ch == '+') state = ARITH_0;// +
 			else if (ch == '-') state = ARITH_1;// -
 			else if (ch == '*') state = ARITH_2;// *
@@ -99,6 +100,99 @@ int main() {
 					table.insertTable(Record(ID, buffer));
 				}
 				state = END;
+			}
+			break;
+		}
+
+		//数
+		case DIGIT_0: {
+			ch = fin.get();
+
+			if ( isdigit(ch) ) {
+				buffer += ch;
+				//state = DIGIT_0;
+			}
+			else if (ch == '.') {
+				buffer += ch;
+				state = DIGIT_1;
+			}
+			else if (ch == 'e') {
+				buffer += ch;
+				state = DIGIT_3;
+			}
+			else {
+				table.insertTable(Record(INT, buffer));
+				state = END;
+			}
+			break;
+		}
+		case DIGIT_1: {
+			ch = fin.get();
+
+			if (isdigit(ch)) {
+				buffer += ch;
+				state = DIGIT_2;
+			}
+			else {
+				state = ERROR;
+			}
+			break;
+		}
+		case DIGIT_2: {
+			ch = fin.get();
+
+			if (isdigit(ch)) {
+				buffer += ch;
+				//state = DIGIT_2;
+			}
+			else if (ch == 'e') {
+				buffer += ch;
+				state = DIGIT_3;
+			}
+			else {
+				table.insertTable(Record(DOUBLE, buffer));
+				state = END;
+			}
+			break;
+		}
+		case DIGIT_3: {
+			ch = fin.get();
+
+			if (isdigit(ch)) {
+				buffer += ch;
+				state = DIGIT_4;
+			}
+			else if (ch == '+' || ch == '-') {
+				buffer += ch;
+				state = DIGIT_5;
+			}
+			else {
+				state = ERROR;
+			}
+			break;
+		}
+		case DIGIT_4: {
+			ch = fin.get();
+
+			if (isdigit(ch)) {
+				buffer += ch;
+				//state = DIGIT_4;
+			}
+			else {
+				table.insertTable(Record(DOUBLE, buffer));
+				state = END;
+			}
+			break;
+		}
+		case DIGIT_5: {
+			ch = fin.get();
+
+			if (isdigit(ch)) {
+				buffer += ch;
+				state = DIGIT_4;
+			}
+			else {
+				state = ERROR;
 			}
 			break;
 		}
