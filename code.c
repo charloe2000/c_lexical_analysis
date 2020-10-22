@@ -8,6 +8,8 @@ int main() {
 	for (int i = 0; i < 11 || p < 5; i << 1) {
 		p += 1.618;
 	}
+	1234adf
+	3.14ahell
 	//print chars
 	printf("%s", hello);
 	return 0;

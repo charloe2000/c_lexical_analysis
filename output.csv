@@ -48,6 +48,8 @@ arith_op, +=
 double, 1.618
 punctuation, ;
 punctuation, }
+unrecognized, 1234adf
+unrecognized, 3.14ahell
 comment, //print chars
 id, printf
 punctuation, (
@@ -61,8 +63,8 @@ int, 0
 punctuation, ;
 punctuation, }
 
-total characters,243
-total lines,15
+total characters,263
+total lines,17
 include,1
 id,11
 keyword,8
@@ -76,5 +78,7 @@ arith_op,1
 logical_op,1
 comment,2
 punctuation,21
-unrecognized,0
+unrecognized,2
 
+An error appears on line 11,1234adf
+An error appears on line 12,3.14ahell

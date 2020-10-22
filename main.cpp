@@ -48,7 +48,7 @@ int main() {
 			else state = ERROR;//词法错误
 			break;
 		}
-					//包含语句
+		//包含语句
 		case INCLUDE_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 			buffer += ch;
@@ -157,6 +157,10 @@ int main() {
 				buffer += ch;
 				state = DIGIT_3;
 			}
+			else if (isalpha(ch) || ch == '_') {
+				buffer += ch;
+				state = ERROR;
+			}
 			else {
 				table.insertTable(Record(DOUBLE, buffer));
 				state = END;
@@ -184,6 +188,10 @@ int main() {
 				buffer += ch;
 				//state = DIGIT_4;
 			}
+			else if (isalpha(ch) || ch == '_') {
+				buffer += ch;
+				state = ERROR;
+			}
 			else {
 				table.insertTable(Record(DOUBLE, buffer));
 				state = END;
@@ -202,7 +210,7 @@ int main() {
 			break;
 		}
 
-					  //赋值运算符：= or 关系运算符： ==
+		//赋值运算符：= or 关系运算符： ==
 		case ASSIGN_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -219,7 +227,7 @@ int main() {
 			break;
 		}
 
-					   //关系运算符： >, >=, >>
+		//关系运算符： >, >=, >>
 		case RELATION_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -241,7 +249,7 @@ int main() {
 			}
 			break;
 		}
-						 //关系运算符： <, <=, <<
+		//关系运算符： <, <=, <<
 		case RELATION_1: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -264,7 +272,7 @@ int main() {
 			break;
 		}
 
-						 //逻辑运算符: &&
+		//逻辑运算符: &&
 		case LOGICAL_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 			buffer += ch;
@@ -279,7 +287,7 @@ int main() {
 			}
 			break;
 		}
-						//逻辑运算符: ||
+		//逻辑运算符: ||
 		case LOGICAL_1: {
 			ch = getch(&fin,&count[14],&count[15]);
 			buffer += ch;
@@ -294,7 +302,7 @@ int main() {
 			}
 			break;
 		}
-						//逻辑运算符: ! or 关系运算符: !=
+		//逻辑运算符: ! or 关系运算符: !=
 		case LOGICAL_2: {
 			ch = getch(&fin,&count[14],&count[15]);
 			if (ch == '=') {
@@ -310,7 +318,7 @@ int main() {
 			break;
 		}
 
-						//标点符号
+		//标点符号
 		case PUNCTUATION_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -319,7 +327,7 @@ int main() {
 			break;
 		}
 
-							//单引号
+		//单引号
 		case SINGLE_QUETO_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 			buffer += ch;
@@ -351,7 +359,7 @@ int main() {
 			break;
 		}
 
-							 //双引号
+		//双引号
 		case DOUBLE_QUETO_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 			buffer += ch;
@@ -389,7 +397,7 @@ int main() {
 			break;
 		}
 
-							 //注释://
+		//注释://
 		case COMMENT_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -424,7 +432,7 @@ int main() {
 			}
 			break;
 		}
-						//注释:/*
+		//注释:/*
 		case COMMENT_2: {
 			ch = getch(&fin,&count[14],&count[15]);
 			buffer += ch;
@@ -454,7 +462,7 @@ int main() {
 			}
 			break;
 		}
-						// +
+		// +
 		case ARITH_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -470,7 +478,7 @@ int main() {
 			}
 			break;
 		}
-					  // -
+		// -
 		case ARITH_1: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -487,7 +495,7 @@ int main() {
 			break;
 		}
 
-					  // *
+		// *
 		case ARITH_2: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -503,7 +511,7 @@ int main() {
 			}
 			break;
 		}
-					  // %
+		// %
 		case ARITH_3: {
 			ch = getch(&fin,&count[14],&count[15]);
 
@@ -519,8 +527,8 @@ int main() {
 			}
 			break;
 		}
-					  //读完一个词后，进入END状态。
-					  //进入END状态时，一定是ch当前在下一个词开头或为空格或为EOF
+		//读完一个词后，进入END状态。
+		//进入END状态时，一定是ch当前在下一个词开头或为空格或为EOF
 		case END: {
 			if (isspace(ch)) {
 				while (isspace(ch = getch(&fin,&count[14],&count[15])));
@@ -530,7 +538,7 @@ int main() {
 			break;
 		}
 
-				  //遇到无法解析的词法
+		//遇到无法解析的词法
 		case ERROR: {
 			//如果遇到无法识别的词,把该词剩余字符读取完毕
 			//并且，将该词记入记号表,标为unrecognized
