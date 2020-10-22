@@ -109,8 +109,8 @@ int main() {
 			break;
 		}
 
-						   //数
-				case DIGIT_0: {
+		//数
+		case DIGIT_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
 			if (isdigit(ch)) {
@@ -125,6 +125,10 @@ int main() {
 				buffer += ch;
 				state = DIGIT_3;
 			}
+			else if (isalpha(ch) || ch == '_') {
+				buffer += ch;
+				state = ERROR;
+			}
 			else {
 				table.insertTable(Record(INT, buffer));
 				state = END;
@@ -133,9 +137,8 @@ int main() {
 		}
 		case DIGIT_1: {
 			ch = getch(&fin,&count[14],&count[15]);
-
+			buffer += ch;
 			if (isdigit(ch)) {
-				buffer += ch;
 				state = DIGIT_2;
 			}
 			else {
@@ -162,13 +165,11 @@ int main() {
 		}
 		case DIGIT_3: {
 			ch = getch(&fin,&count[14],&count[15]);
-
+			buffer += ch;
 			if (isdigit(ch)) {
-				buffer += ch;
 				state = DIGIT_4;
 			}
 			else if (ch == '+' || ch == '-') {
-				buffer += ch;
 				state = DIGIT_5;
 			}
 			else {
@@ -191,9 +192,8 @@ int main() {
 		}
 		case DIGIT_5: {
 			ch = getch(&fin,&count[14],&count[15]);
-
+			buffer += ch;
 			if (isdigit(ch)) {
-				buffer += ch;
 				state = DIGIT_4;
 			}
 			else {
