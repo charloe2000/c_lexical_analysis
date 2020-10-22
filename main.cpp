@@ -29,7 +29,8 @@ int main() {
 			if (isalpha(ch) || ch == '_') state = ID_KEYWORD_0;	// 标识符或关键字
 			else if (isPunctuation(ch))	state = PUNCTUATION_0;	//标点符号	
 			else if (ch == '#') state = INCLUDE_0; //#include
-			else if (isdigit(ch)) state = DIGIT_0;// 数		
+			else if (isdigit(ch)) state = DIGIT_0;// 数
+			else if (ch == '.') state = DIGIT_1;// 数
 			else if (ch == '+') state = ARITH_0;// +
 			else if (ch == '-') state = ARITH_1;// -
 			else if (ch == '*') state = ARITH_2;// *
@@ -109,7 +110,7 @@ int main() {
 		}
 
 						   //数
-		case DIGIT_0: {
+				case DIGIT_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
 			if (isdigit(ch)) {
@@ -118,9 +119,9 @@ int main() {
 			}
 			else if (ch == '.') {
 				buffer += ch;
-				state = DIGIT_1;
+				state = DIGIT_2;
 			}
-			else if (ch == 'e') {
+			else if (ch == 'e' || ch == 'E') {
 				buffer += ch;
 				state = DIGIT_3;
 			}
@@ -149,7 +150,7 @@ int main() {
 				buffer += ch;
 				//state = DIGIT_2;
 			}
-			else if (ch == 'e') {
+			else if (ch == 'e' || ch == 'E') {
 				buffer += ch;
 				state = DIGIT_3;
 			}
