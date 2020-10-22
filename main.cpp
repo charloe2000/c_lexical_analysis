@@ -1,4 +1,4 @@
-﻿#include "config.h"
+#include "config.h"
 #include "utils.h"
 #include <fstream>
 #include <string>
@@ -89,7 +89,7 @@ int main() {
 			break;
 		}
 
-						//标识符或关键字的第一个状态
+		//标识符或关键字的第一个状态
 		case ID_KEYWORD_0: {
 			ch = getch(&fin,&count[14],&count[15]);
 
