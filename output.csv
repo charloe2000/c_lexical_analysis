@@ -45,7 +45,7 @@ punctuation, )
 punctuation, {
 id, p
 arith_op, +=
-double, 1.618
+double, .618
 punctuation, ;
 punctuation, }
 unrecognized, 1234adf
@@ -63,7 +63,7 @@ int, 0
 punctuation, ;
 punctuation, }
 
-total characters,263
+total characters,262
 total lines,17
 include,1
 id,11
